@@ -1,0 +1,47 @@
+# =============================================================================
+#  Tradewind — тексты.
+#
+#  Поддерживаются MiniMessage (<red>, <gradient:#4ade80:#22d3ee>) и legacy-коды
+#  (&a, &l, &#ffaa00) — их можно смешивать в одной строке.
+#  {ключ} — подстановка значения плагином, менять имена ключей нельзя.
+#  version — версия схемы; при устаревшей версии файл будет пересоздан с
+#  резервной копией (messages.yml.bak-vN).
+# =============================================================================
+version: 1
+
+prefix: "<gray>[<gradient:#4ade80:#22d3ee>Tradewind</gradient>]</gray> "
+
+command:
+  no-permission: "<red>Недостаточно прав.</red>"
+  unknown-subcommand: "<red>Неизвестная подкоманда <white>{input}</white>. Используйте <white>/{label} help</white>.</red>"
+
+  help:
+    header: "<dark_gray>—— <white>Tradewind</white> <gray>v{version}</gray> ——</dark_gray>"
+    line: "<gray>/{label} <white>{sub}</white> <dark_gray>—</dark_gray> <gray>{description}</gray>"
+    usage: "&7Сборка: &f{artifact}&7, сервер: &f{server}"
+    sub:
+      help: "справка"
+      status: "состояние зависимостей и сборки"
+      reload: "перезагрузить конфиги и сообщения"
+
+  reload:
+    success: "<green>Конфиги и сообщения перезагружены.</green> <gray>Зависимости: {dependencies}.</gray>"
+    failed: "<red>Перезагрузка не удалась: <white>{error}</white>. Подробности в консоли.</red>"
+
+  status:
+    header: "<dark_gray>—— <white>Состояние Tradewind</white> ——</dark_gray>"
+    version: "<gray>Версия: <white>{version}</white></gray>"
+    server: "<gray>Сервер: <white>{minecraft}</white> <dark_gray>({line})</dark_gray></gray>"
+    artifact-ok: "<gray>Сборка: <white>{artifact}</white> <green>✔ соответствует серверу</green></gray>"
+    artifact-mismatch: "<gray>Сборка: <white>{artifact}</white> <yellow>⚠ ожидалась {expected}</yellow></gray>"
+    dependencies-header: "<gray>Зависимости:</gray>"
+    dependency-present: "<green>✔ {name}</green> <dark_gray>— {purpose}</dark_gray>"
+    dependency-missing-required: "<red>✘ {name}</red> <dark_gray>— обязателен: {purpose}</dark_gray>"
+    dependency-missing-optional: "<yellow>• {name}</yellow> <dark_gray>— необязателен: {purpose}</dark_gray>"
+    economy: "<gray>Экономика: <white>{backend}</white>, баланс: <white>{balance}</white></gray>"
+    economy-unavailable: "<red>Экономика недоступна: Vault не найден или провайдер не зарегистрирован.</red>"
+    config-versions: "<gray>Схемы файлов: config <white>v{config}</white>, messages <white>v{messages}</white></gray>"
+
+startup:
+  degraded: "<yellow>Плагин запущен в урезанном режиме: отсутствуют {missing}.</yellow>"
+

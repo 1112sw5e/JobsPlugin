@@ -1,0 +1,37 @@
+name: Tradewind
+version: '${version}'
+main: com.tradewind.TradewindPlugin
+api-version: '1.21'
+description: Professions, statistics and a resource buyer for Paper 1.21.x - 26.1.x.
+authors: [ Tradewind ]
+website: https://github.com/1112sw5e/JobsPlugin
+
+# Folia is intentionally unsupported: only the regular Bukkit scheduler is used.
+folia-supported: false
+
+# Required plugins are declared as softdepend on purpose. With hard "depend" the server would
+# silently skip Tradewind when one is missing; instead Tradewind checks them itself and prints
+# a readable message (no NoClassDefFoundError).
+softdepend:
+  - Vault
+  - PlaceholderAPI
+  - WorldGuard
+  - TAB
+
+commands:
+  tradewind:
+    description: Tradewind administration
+    usage: /tradewind <help|status|reload>
+    aliases: [ tw ]
+
+permissions:
+  tradewind.use:
+    description: Access to the Tradewind help
+    default: true
+  tradewind.admin.status:
+    description: View dependency and build status
+    default: op
+  tradewind.admin.reload:
+    description: Reload configuration and messages
+    default: op
+
