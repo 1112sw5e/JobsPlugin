@@ -25,6 +25,7 @@ public final class YamlFile {
     private final String fileName;
     private final int expectedVersion;
     private YamlConfiguration yaml = new YamlConfiguration();
+    private YamlConfiguration defaults = new YamlConfiguration();
 
     public YamlFile(JavaPlugin plugin, String fileName, int expectedVersion) {
         this.plugin = plugin;
@@ -34,6 +35,7 @@ public final class YamlFile {
 
     public void reload() {
         File file = new File(plugin.getDataFolder(), fileName);
+        loadDefaults();
         if (!file.isFile()) {
             copyDefault(false);
         }
@@ -42,7 +44,6 @@ public final class YamlFile {
         int actualVersion = yaml.getInt("version", -1);
         if (actualVersion < 0) {
             plugin.getLogger().warning(fileName + ": отсутствует ключ version, работаю со значениями из файла как есть.");
-            applyDefaults(file, actualVersion, false);
             return;
         }
         if (actualVersion > expectedVersion) {
@@ -52,8 +53,6 @@ public final class YamlFile {
         }
         if (actualVersion < expectedVersion) {
             upgrade(file, actualVersion);
-        } else {
-            applyDefaults(file, actualVersion, false);
         }
     }
 
@@ -62,10 +61,11 @@ public final class YamlFile {
         Path backup = source.resolveSibling(fileName + ".bak-v" + actualVersion);
         try {
             Files.copy(source, backup, StandardCopyOption.REPLACE_EXISTING);
-            applyDefaults(file, expectedVersion, true);
-            plugin.getLogger().warning(fileName + ": схема v" + actualVersion + " обновлена до v"
-                    + expectedVersion + ". Ваши значения сохранены, недостающие ключи добавлены. "
-                    + "Резервная копия: " + backup.getFileName());
+            copyDefault(true);
+            yaml = YamlConfiguration.loadConfiguration(file);
+            plugin.getLogger().warning(fileName + ": схема v" + actualVersion + " заменена на v"
+                    + expectedVersion + " с безопасными значениями. Резервная копия с вашими правками: "
+                    + backup.getFileName());
         } catch (IOException | RuntimeException failure) {
             plugin.getLogger().log(Level.SEVERE, "Не удалось обновить " + fileName
                     + "; продолжаю с текущим файлом, сделайте резервную копию вручную.", failure);
@@ -73,43 +73,28 @@ public final class YamlFile {
     }
 
     /**
-     * Adds keys that exist in the bundled file but not in the user's copy, keeping every value
-     * the admin already set. This is what lets a new stage introduce settings without wiping
-     * an existing configuration.
+     * Reads the bundled file once per reload so callers can fall back to a default when an
+     * admin's copy predates a newly introduced key. The user's file is never rewritten here:
+     * Bukkit's YAML writer would drop every comment.
      */
-    private void applyDefaults(File file, int targetVersion, boolean forceSave) {
+    private void loadDefaults() {
         try (InputStream stream = plugin.getResource(fileName)) {
             if (stream == null) {
+                defaults = new YamlConfiguration();
                 return;
             }
-            YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
+            defaults = YamlConfiguration.loadConfiguration(
                     new InputStreamReader(stream, StandardCharsets.UTF_8));
-            YamlConfiguration current = YamlConfiguration.loadConfiguration(file);
-            boolean changed = forceSave;
-            boolean added = false;
-            for (String key : defaults.getKeys(true)) {
-                if (defaults.isConfigurationSection(key) || current.contains(key)) {
-                    continue;
-                }
-                current.set(key, defaults.get(key));
-                changed = true;
-                added = true;
-            }
-            if (targetVersion > 0 && current.getInt("version", 0) < targetVersion) {
-                current.set("version", targetVersion);
-                changed = true;
-            }
-            if (changed) {
-                current.save(file);
-                yaml = current;
-                if (added) {
-                    plugin.getLogger().info(fileName + ": добавлены отсутствующие ключи из версии плагина.");
-                }
-            }
         } catch (IOException | RuntimeException failure) {
+            defaults = new YamlConfiguration();
             plugin.getLogger().log(Level.WARNING,
-                    "Не удалось дополнить " + fileName + " значениями по умолчанию.", failure);
+                    "Не удалось прочитать значения по умолчанию для " + fileName + ".", failure);
         }
+    }
+
+    /** Bundled values, used when the admin's file does not contain a key yet. */
+    public YamlConfiguration bundledDefaults() {
+        return defaults;
     }
 
     private void copyDefault(boolean overwrite) {

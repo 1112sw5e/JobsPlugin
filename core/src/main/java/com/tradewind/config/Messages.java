@@ -21,6 +21,7 @@ public final class Messages {
     private final YamlFile file;
     private final Set<String> reportedMissing = ConcurrentHashMap.newKeySet();
     private Component prefix = Component.empty();
+    private boolean fallbackNotified;
 
     public Messages(JavaPlugin plugin) {
         this.logger = plugin.getLogger();
@@ -28,8 +29,12 @@ public final class Messages {
     }
 
     public void reload() {
+        fallbackNotified = false;
         file.reload();
         String rawPrefix = file.yaml().getString("prefix", "");
+        if (rawPrefix == null) {
+            rawPrefix = file.bundledDefaults().getString("prefix", "");
+        }
         prefix = rawPrefix == null || rawPrefix.isBlank() ? Component.empty() : Text.render(rawPrefix);
     }
 
@@ -39,7 +44,7 @@ public final class Messages {
 
     /** Raw configured string, used when one message is a placeholder of another. */
     public String raw(String key) {
-        String value = file.yaml().getString(key);
+        String value = lookup(key);
         if (value == null) {
             reportMissing(key);
             return "";
@@ -52,7 +57,7 @@ public final class Messages {
     }
 
     public Component component(String key, Map<String, String> placeholders) {
-        String value = file.yaml().getString(key);
+        String value = lookup(key);
         if (value == null) {
             reportMissing(key);
             value = "<red>[Tradewind: нет сообщения " + key + "]</red>";
@@ -61,7 +66,7 @@ public final class Messages {
     }
 
     public List<Component> componentList(String key) {
-        List<String> lines = file.yaml().getStringList(key);
+        List<String> lines = lookupList(key);
         List<Component> rendered = new ArrayList<>(lines.size());
         for (String line : lines) {
             rendered.add(Text.render(line));
@@ -70,12 +75,44 @@ public final class Messages {
     }
 
     public List<Component> componentList(String key, Map<String, String> placeholders) {
-        List<String> lines = file.yaml().getStringList(key);
+        List<String> lines = lookupList(key);
         List<Component> rendered = new ArrayList<>(lines.size());
         for (String line : lines) {
             rendered.add(Text.render(line, placeholders));
         }
         return rendered;
+    }
+
+    private String lookup(String key) {
+        String value = file.yaml().getString(key);
+        if (value != null) {
+            return value;
+        }
+        String fallback = file.bundledDefaults().getString(key);
+        if (fallback != null) {
+            notifyFallback();
+        }
+        return fallback;
+    }
+
+    private List<String> lookupList(String key) {
+        if (file.yaml().contains(key)) {
+            return file.yaml().getStringList(key);
+        }
+        List<String> fallback = file.bundledDefaults().getStringList(key);
+        if (!fallback.isEmpty()) {
+            notifyFallback();
+        }
+        return fallback;
+    }
+
+    /** One line per reload: the file is left untouched, missing keys come from the jar. */
+    private void notifyFallback() {
+        if (!fallbackNotified) {
+            fallbackNotified = true;
+            logger.info("messages.yml: часть ключей отсутствует в вашем файле, "
+                    + "используются значения из jar (файл не изменяется).");
+        }
     }
 
     public void send(CommandSender target, String key) {

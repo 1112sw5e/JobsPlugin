@@ -40,11 +40,15 @@ public final class ShopService {
         if (data == null) {
             return Result.NO_ECONOMY;
         }
-        if (definition.requiredLevel() > 1 || definition.requiredProfession() != null) {
-            ProfessionSettings required = definition.requiredProfession() == null
-                    ? null : context.config().profession(definition.requiredProfession());
+        if (definition.requiredProfession() != null) {
+            ProfessionSettings required = context.config().profession(definition.requiredProfession());
             if (required == null || data.profession().orElse(null) != definition.requiredProfession()
                     || data.stats(definition.requiredProfession()).level() < definition.requiredLevel()) {
+                return Result.LOCKED;
+            }
+        } else if (definition.requiredLevel() > 1) {
+            var selected = data.profession().orElse(null);
+            if (selected == null || data.stats(selected).level() < definition.requiredLevel()) {
                 return Result.LOCKED;
             }
         }
