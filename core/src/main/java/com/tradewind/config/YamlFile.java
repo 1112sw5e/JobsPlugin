@@ -2,6 +2,9 @@ package com.tradewind.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -39,6 +42,7 @@ public final class YamlFile {
         int actualVersion = yaml.getInt("version", -1);
         if (actualVersion < 0) {
             plugin.getLogger().warning(fileName + ": отсутствует ключ version, работаю со значениями из файла как есть.");
+            applyDefaults(file, actualVersion, false);
             return;
         }
         if (actualVersion > expectedVersion) {
@@ -48,6 +52,8 @@ public final class YamlFile {
         }
         if (actualVersion < expectedVersion) {
             upgrade(file, actualVersion);
+        } else {
+            applyDefaults(file, actualVersion, false);
         }
     }
 
@@ -56,13 +62,53 @@ public final class YamlFile {
         Path backup = source.resolveSibling(fileName + ".bak-v" + actualVersion);
         try {
             Files.copy(source, backup, StandardCopyOption.REPLACE_EXISTING);
-            copyDefault(true);
-            yaml = YamlConfiguration.loadConfiguration(file);
-            plugin.getLogger().warning(fileName + ": схема v" + actualVersion + " заменена на v" + expectedVersion
-                    + " (пока без миграции значений). Резервная копия: " + backup.getFileName());
+            applyDefaults(file, expectedVersion, true);
+            plugin.getLogger().warning(fileName + ": схема v" + actualVersion + " обновлена до v"
+                    + expectedVersion + ". Ваши значения сохранены, недостающие ключи добавлены. "
+                    + "Резервная копия: " + backup.getFileName());
         } catch (IOException | RuntimeException failure) {
             plugin.getLogger().log(Level.SEVERE, "Не удалось обновить " + fileName
                     + "; продолжаю с текущим файлом, сделайте резервную копию вручную.", failure);
+        }
+    }
+
+    /**
+     * Adds keys that exist in the bundled file but not in the user's copy, keeping every value
+     * the admin already set. This is what lets a new stage introduce settings without wiping
+     * an existing configuration.
+     */
+    private void applyDefaults(File file, int targetVersion, boolean forceSave) {
+        try (InputStream stream = plugin.getResource(fileName)) {
+            if (stream == null) {
+                return;
+            }
+            YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(stream, StandardCharsets.UTF_8));
+            YamlConfiguration current = YamlConfiguration.loadConfiguration(file);
+            boolean changed = forceSave;
+            boolean added = false;
+            for (String key : defaults.getKeys(true)) {
+                if (defaults.isConfigurationSection(key) || current.contains(key)) {
+                    continue;
+                }
+                current.set(key, defaults.get(key));
+                changed = true;
+                added = true;
+            }
+            if (targetVersion > 0 && current.getInt("version", 0) < targetVersion) {
+                current.set("version", targetVersion);
+                changed = true;
+            }
+            if (changed) {
+                current.save(file);
+                yaml = current;
+                if (added) {
+                    plugin.getLogger().info(fileName + ": добавлены отсутствующие ключи из версии плагина.");
+                }
+            }
+        } catch (IOException | RuntimeException failure) {
+            plugin.getLogger().log(Level.WARNING,
+                    "Не удалось дополнить " + fileName + " значениями по умолчанию.", failure);
         }
     }
 

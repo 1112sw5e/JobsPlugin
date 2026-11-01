@@ -1,0 +1,59 @@
+# =============================================================================
+#  Tradewind — магазин уникальных крафтов.
+#
+#  Предмет выдаётся с PDC-меткой tradewind:shop_item, поэтому скупщик его не
+#  принимает и перепродать его нельзя. enchantments — ключи Minecraft
+#  (efficiency, unbreaking, fortune, silk_touch, mending, sharpness...).
+#  profession/required-level — условие доступа к покупке.
+#  version — версия схемы файла.
+# =============================================================================
+version: 1
+
+enabled: true
+rows: 5
+title: "<dark_gray>Уникальные крафты</dark_gray>"
+
+items:
+  depths_pickaxe:
+    material: DIAMOND_PICKAXE
+    amount: 1
+    display: "<gradient:#4ade80:#22d3ee>Кирка глубин</gradient>"
+    lore:
+      - "<gray>Уникальный инструмент шахтёра.</gray>"
+      - "<dark_gray>Нельзя перепродать скупщику.</dark_gray>"
+    price: 25000
+    profession: mine
+    required-level: 5
+    enchantments:
+      efficiency: 5
+      unbreaking: 3
+      fortune: 3
+    unbreakable: true
+  harvester_hoe:
+    material: DIAMOND_HOE
+    amount: 1
+    display: "<gradient:#facc15:#f97316>Коса жнеца</gradient>"
+    lore:
+      - "<gray>Уникальный инструмент фермера.</gray>"
+      - "<dark_gray>Нельзя перепродать скупщику.</dark_gray>"
+    price: 18000
+    profession: farm
+    required-level: 4
+    enchantments:
+      efficiency: 4
+      unbreaking: 3
+    unbreakable: true
+  angler_rod:
+    material: FISHING_ROD
+    amount: 1
+    display: "<gradient:#38bdf8:#818cf8>Удочка глубин</gradient>"
+    lore:
+      - "<gray>Уникальный инструмент рыбака.</gray>"
+      - "<dark_gray>Нельзя перепродать скупщику.</dark_gray>"
+    price: 12000
+    profession: fish
+    required-level: 3
+    enchantments:
+      unbreaking: 3
+    unbreakable: true
+

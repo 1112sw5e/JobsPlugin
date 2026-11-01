@@ -1,0 +1,87 @@
+# =============================================================================
+#  Tradewind — цены скупщика.
+#
+#  Цена указана за один предмет и применяется и к GUI скупщика, и к авто-скупке.
+#  Значение должно быть больше нуля. Предметы, которых здесь нет, скупщик не
+#  принимает (в том числе предметы из shop.yml — их нельзя перепродать).
+#  version — версия схемы файла.
+# =============================================================================
+version: 1
+
+items:
+  # --- камень и руда -------------------------------------------------------
+  COBBLESTONE: 1.0
+  COBBLED_DEEPSLATE: 1.2
+  STONE: 1.1
+  DEEPSLATE: 1.3
+  GRANITE: 1.1
+  DIORITE: 1.1
+  ANDESITE: 1.1
+  TUFF: 1.1
+  CALCITE: 1.2
+  NETHERRACK: 0.8
+  BASALT: 0.9
+  BLACKSTONE: 1.4
+  END_STONE: 1.6
+  GRAVEL: 0.9
+  FLINT: 2.0
+  SAND: 0.7
+  DIRT: 0.3
+  COAL: 3.0
+  CHARCOAL: 2.5
+  RAW_IRON: 8.0
+  RAW_COPPER: 5.0
+  RAW_GOLD: 12.0
+  IRON_INGOT: 9.0
+  COPPER_INGOT: 5.5
+  GOLD_INGOT: 13.0
+  REDSTONE: 2.0
+  LAPIS_LAZULI: 4.0
+  DIAMOND: 60.0
+  EMERALD: 75.0
+  QUARTZ: 3.5
+  ANCIENT_DEBRIS: 240.0
+  NETHERITE_SCRAP: 200.0
+
+  # --- древесина -----------------------------------------------------------
+  OAK_LOG: 2.0
+  BIRCH_LOG: 2.0
+  SPRUCE_LOG: 2.0
+  JUNGLE_LOG: 2.2
+  ACACIA_LOG: 2.2
+  DARK_OAK_LOG: 2.4
+  MANGROVE_LOG: 2.4
+  CHERRY_LOG: 2.6
+  CRIMSON_STEM: 3.0
+  WARPED_STEM: 3.0
+  BAMBOO: 1.0
+
+  # --- ферма ---------------------------------------------------------------
+  WHEAT: 3.0
+  WHEAT_SEEDS: 1.0
+  CARROT: 2.5
+  POTATO: 2.5
+  BEETROOT: 2.5
+  SUGAR_CANE: 2.0
+  MELON_SLICE: 1.5
+  PUMPKIN: 4.0
+  COCOA_BEANS: 2.0
+  SWEET_BERRIES: 2.0
+  CACTUS: 2.0
+  NETHER_WART: 3.0
+
+  # --- рыба ----------------------------------------------------------------
+  COD: 6.0
+  SALMON: 7.0
+  TROPICAL_FISH: 9.0
+  PUFFERFISH: 10.0
+  NAUTILUS_SHELL: 40.0
+  INK_SAC: 4.0
+
+  # --- снег и лёд ----------------------------------------------------------
+  SNOWBALL: 0.8
+  SNOW_BLOCK: 1.2
+  ICE: 1.5
+  PACKED_ICE: 2.0
+  BLUE_ICE: 3.0
+

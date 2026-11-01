@@ -12,6 +12,8 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/") { name = "papermc" }
         maven("https://jitpack.io") { name = "jitpack" }
+        maven("https://repo.extendedclip.com/releases/") { name = "placeholderapi" }
+        maven("https://maven.enginehub.org/repo/") { name = "enginehub" }
     }
 }
 

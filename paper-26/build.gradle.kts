@@ -22,6 +22,15 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit")
     }
+    compileOnly("me.clip:placeholderapi:2.11.6")
+    // Same 7.0.17 API baseline as :core, so one shared source set compiles on both lines.
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.17") { isTransitive = false }
+    compileOnly("com.sk89q.worldguard:worldguard-core:7.0.17") { isTransitive = false }
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.4.2") { isTransitive = false }
+    compileOnly("com.sk89q.worldedit:worldedit-core:7.4.2") { isTransitive = false }
+    compileOnly("com.github.NEZNAMY:TAB-API:6.1.2")
+
+    implementation("org.xerial:sqlite-jdbc:3.49.1.0")
 }
 
 val pluginVersion = version.toString()
@@ -36,5 +45,8 @@ tasks.processResources {
 tasks.jar {
     archiveBaseName.set("Tradewind")
     archiveClassifier.set("paper-26.1")
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
+        exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA", "module-info.class")
+    }
 }
 

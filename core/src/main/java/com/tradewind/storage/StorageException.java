@@ -1,0 +1,16 @@
+package com.tradewind.storage;
+
+/** Database failure with an operator-readable message. */
+public final class StorageException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
+    public StorageException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public StorageException(String message) {
+        super(message);
+    }
+}
+

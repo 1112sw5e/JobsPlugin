@@ -3,8 +3,8 @@
 #
 #  Поддерживаются MiniMessage (<red>, <gradient:#4ade80:#22d3ee>) и legacy-коды
 #  (&a, &l, &#ffaa00) — их можно смешивать в одной строке.
-#  {ключ} — подстановка значения плагином, менять имена ключей нельзя.
-#  version — версия схемы; при устаревшей версии файл будет пересоздан с
+#  {ключ} — подстановка значения плагином, имена ключей менять нельзя.
+#  version — версия схемы; при устаревшей версии файл пересоздаётся с
 #  резервной копией (messages.yml.bak-vN).
 # =============================================================================
 version: 1
@@ -13,7 +13,12 @@ prefix: "<gray>[<gradient:#4ade80:#22d3ee>Tradewind</gradient>]</gray> "
 
 command:
   no-permission: "<red>Недостаточно прав.</red>"
+  player-only: "<red>Команда доступна только игроку.</red>"
+  player-not-found: "<red>Игрок <white>{player}</white> не в сети.</red>"
   unknown-subcommand: "<red>Неизвестная подкоманда <white>{input}</white>. Используйте <white>/{label} help</white>.</red>"
+  usage-top: "<red>Укажите профессию: <white>/tw top mine</white>.</red>"
+  usage-stats: "<red>Использование: <white>/tw stats [игрок]</white>.</red>"
+  usage-boost: "<red>Использование: <white>/tw boost <игрок> <money|xp> [30m]</white>.</red>"
 
   help:
     header: "<dark_gray>—— <white>Tradewind</white> <gray>v{version}</gray> ——</dark_gray>"
@@ -23,6 +28,9 @@ command:
       help: "справка"
       status: "состояние зависимостей и сборки"
       reload: "перезагрузить конфиги и сообщения"
+      top: "топ профессии"
+      stats: "статистика игрока"
+      boost: "выдать буст без оплаты (админ)"
 
   reload:
     success: "<green>Конфиги и сообщения перезагружены.</green> <gray>Зависимости: {dependencies}.</gray>"
@@ -44,4 +52,114 @@ command:
 
 startup:
   degraded: "<yellow>Плагин запущен в урезанном режиме: отсутствуют {missing}.</yellow>"
+
+# -----------------------------------------------------------------------------
+#  Профессии
+# -----------------------------------------------------------------------------
+profession:
+  action-bar: "<gray>{profession} <dark_gray>|</dark_gray> <green>+{money}</green> <dark_gray>|</dark_gray> <gray>ур. <white>{level}</white> <dark_gray>|</dark_gray> <gray>XP <white>{xp}</white></gray>"
+  level-up: "<gradient:#4ade80:#22d3ee>Новый уровень!</gradient> <gray>{profession}: <white>{level}</white>, награда <green>{reward}</green></gray>"
+  selected: "<green>Профессия выбрана: <white>{profession}</white>.</green>"
+  already: "<gray>Профессия <white>{profession}</white> уже выбрана.</gray>"
+  disabled: "<red>Профессия <white>{profession}</white> выключена на этом сервере.</red>"
+  unknown: "<red>Неизвестная профессия <white>{input}</white>. Доступны: mine, farm, wood, fish, snow.</red>"
+  change-forbidden: "<red>Смена профессии запрещена на этом сервере.</red>"
+  cooldown: "<red>Сменить профессию можно через <white>{time}</white>.</red>"
+  not-selected: "<gray>Профессия не выбрана. Укажите её: <white>/prof mine</white> (mine, farm, wood, fish, snow).</gray>"
+  info:
+    header: "<dark_gray>—— <white>Профессия</white> ——</dark_gray>"
+    line: "<gray>{key}: <white>{value}</white></gray>"
+    bar: "<gray>Прогресс: <white>{progress}%</white></gray>"
+    key:
+      level: "Уровень"
+      xp: "Опыт"
+      actions: "Действий"
+      money: "Заработано"
+      multiplier: "Множитель зарплаты"
+
+# -----------------------------------------------------------------------------
+#  Скупщик
+# -----------------------------------------------------------------------------
+buyer:
+  gui:
+    info:
+      name: "<white>К сдаче</white>"
+      lore:
+        - "<gray>Предметов: <white>{items}</white></gray>"
+        - "<gray>Стоимость: <green>{money}</green></gray>"
+        - ""
+        - "<dark_gray>Скупщик принимает только предметы из prices.yml.</dark_gray>"
+    sell-all:
+      name: "<green>Продать всё</green>"
+      lore:
+        - "<gray>Сдать все подходящие предметы из инвентаря.</gray>"
+        - "<gray>Сумма: <green>{money}</green></gray>"
+    sell-hand:
+      name: "<yellow>Продать предмет в руке</yellow>"
+      lore:
+        - "<gray>Сдать только предмет из основной руки.</gray>"
+    close:
+      name: "<red>Закрыть</red>"
+      lore:
+        - "<gray>Выйти из скупщика.</gray>"
+  sold: "<green>Продано <white>{items}</white> предметов за <white>{money}</white>.</green>"
+  nothing: "<red>Нет предметов, которые скупщик принимает.</red>"
+  cooldown: "<red>Слишком часто. Подождите мгновение.</red>"
+  disabled: "<red>Скупщик выключен на этом сервере.</red>"
+
+profile-loading: "<yellow>Профиль ещё загружается, попробуйте через секунду.</yellow>"
+economy-unavailable: "<red>Экономика недоступна: нужен Vault и плагин экономики.</red>"
+
+# -----------------------------------------------------------------------------
+#  Авто-скупка, бусты, магазин
+# -----------------------------------------------------------------------------
+autosell:
+  enabled: "<green>Авто-скупка включена: добыча сразу оплачивается.</green>"
+  disabled: "<gray>Авто-скупка выключена.</gray>"
+
+boost:
+  gui:
+    entry:
+      lore:
+        - "<gray>Множитель: <white>{multiplier}</white></gray>"
+        - "<gray>Длительность: <white>{duration}</white></gray>"
+        - "<gray>Цена: <green>{price}</green></gray>"
+        - ""
+        - "<gray>Активен: <white>{remaining}</white></gray>"
+        - "<dark_gray>ЛКМ — купить.</dark_gray>"
+  bought: "<green>Буст активирован.</green>"
+  received: "<gradient:#4ade80:#22d3ee>Вам выдан буст {type} на {duration}.</gradient>"
+  unavailable: "<red>Этот буст недоступен.</red>"
+  disabled: "<red>Бусты выключены на этом сервере.</red>"
+
+shop:
+  gui:
+    entry:
+      name: "<white>{display}</white>"
+      lore:
+        - "<gray>Цена: <green>{price}</green></gray>"
+        - "<gray>Требуется: <white>{profession}</white> ур. <white>{level}</white></gray>"
+        - ""
+        - "<dark_gray>ЛКМ — купить.</dark_gray>"
+  bought: "<green>Куплено: <white>{display}</white> за <white>{price}</white>.</green>"
+  not-enough-money: "<red>Недостаточно средств.</red>"
+  locked: "<red>Нужен уровень <white>{level}</white> в этой профессии.</red>"
+  disabled: "<red>Магазин выключен на этом сервере.</red>"
+  unknown-item: "<red>Такого товара больше нет.</red>"
+
+# -----------------------------------------------------------------------------
+#  Топ и админ-статистика
+# -----------------------------------------------------------------------------
+top:
+  header: "<dark_gray>—— <white>Топ: {profession}</white> ——</dark_gray>"
+  line: "<gray>{rank}. <white>{name}</white> — <white>{actions}</white> действий, <green>{money}</green>, ур. <white>{level}</white></gray>"
+  empty: "<gray>Пока нет данных.</gray>"
+
+admin:
+  stats:
+    header: "<dark_gray>—— <white>Статистика {player}</white> ——</dark_gray>"
+    line: "<gray>{profession}: ур. <white>{level}</white>, XP <white>{xp}</white>, действий <white>{actions}</white>, заработано <green>{money}</green></gray>"
+    footer: "<gray>Авто-скупка: <white>{autosell}</white>, всего: <green>{money}</green>, действий <white>{actions}</white></gray>"
+  boost:
+    granted: "<green {player} получил буст {type} x{multiplier} на {duration}.</green>"
 

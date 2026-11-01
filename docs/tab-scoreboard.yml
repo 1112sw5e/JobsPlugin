@@ -1,0 +1,17 @@
+# Пример фрагмента scoreboard для TAB (plugins/TAB/config.yml -> scoreboards).
+#
+# Значения приходят от самого Tradewind: при наличии TAB плагин регистрирует
+# эти плейсхолдеры сам, PlaceholderAPI для них не нужен.
+scoreboards:
+  tradewind:
+    display-condition: "%player_is_bedrock%!=true"
+    title: "<gradient:#4ade80:#22d3ee>TRADEWIND</gradient>"
+    lines:
+      - "<dark_gray>──────────────"
+      - "<gray>Профессия: <white>%tradewind_profession%</white>"
+      - "<gray>Уровень: <white>%tradewind_level%</white>"
+      - "<gray>Действий: <white>%tradewind_actions%</white>"
+      - "<gray>Заработано: <green>%tradewind_money%</green>"
+      - "<gray>Буст: <white>%tradewind_boost%</white>"
+      - "<dark_gray>──────────────"
+

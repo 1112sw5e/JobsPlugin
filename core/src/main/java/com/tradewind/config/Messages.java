@@ -69,6 +69,15 @@ public final class Messages {
         return rendered;
     }
 
+    public List<Component> componentList(String key, Map<String, String> placeholders) {
+        List<String> lines = file.yaml().getStringList(key);
+        List<Component> rendered = new ArrayList<>(lines.size());
+        for (String line : lines) {
+            rendered.add(Text.render(line, placeholders));
+        }
+        return rendered;
+    }
+
     public void send(CommandSender target, String key) {
         target.sendMessage(prefix.append(component(key)));
     }

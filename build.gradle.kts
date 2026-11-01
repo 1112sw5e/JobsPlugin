@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
+import org.gradle.api.file.DuplicatesStrategy
 
 allprojects {
     group = "com.tradewind"
@@ -17,6 +18,7 @@ subprojects {
     tasks.withType<Jar>().configureEach {
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
 

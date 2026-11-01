@@ -21,17 +21,68 @@ softdepend:
 commands:
   tradewind:
     description: Tradewind administration
-    usage: /tradewind <help|status|reload>
+    usage: /tradewind <help|status|reload|top|stats|boost>
     aliases: [ tw ]
+  prof:
+    description: Show statistics or pick a profession
+    usage: /prof [profession]
+    aliases: [ profession, jobs ]
+  buyer:
+    description: Open the resource collector
+    usage: /buyer
+    aliases: [ sell, skupshchik ]
+  autosell:
+    description: Toggle selling drops automatically
+    usage: /autosell [on|off]
+    aliases: [ asell ]
+  boost:
+    description: Open the boost shop
+    usage: /boost
+    aliases: [ boosts ]
+  shop:
+    description: Open the unique crafts shop
+    usage: /shop
+    aliases: [ crafts ]
 
 permissions:
   tradewind.use:
     description: Access to the Tradewind help
     default: true
+  tradewind.profession:
+    description: View and choose a profession
+    default: true
+  tradewind.buyer:
+    description: Open the collector
+    default: true
+  tradewind.autosell:
+    description: Toggle auto-sell
+    default: true
+  tradewind.boost:
+    description: Open the boost shop
+    default: true
+  tradewind.boost.money:
+    description: Buy the money boost
+    default: true
+  tradewind.boost.xp:
+    description: Buy the xp boost
+    default: true
+  tradewind.shop:
+    description: Open the unique crafts shop
+    default: true
+  tradewind.bypass:
+    description: Excluded from profession payouts (testing and staff)
+    default: false
   tradewind.admin.status:
     description: View dependency and build status
     default: op
   tradewind.admin.reload:
     description: Reload configuration and messages
     default: op
+  tradewind.admin.stats:
+    description: Inspect another player's statistics
+    default: op
+  tradewind.admin.boost:
+    description: Grant boosts without payment
+    default: op
+
 

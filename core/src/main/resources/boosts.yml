@@ -1,0 +1,25 @@
+# =============================================================================
+#  Tradewind — бусты.
+#
+#  Множитель применяется к зарплате (money) или к опыту (xp). Покупка
+#  продлевает уже активный буст того же типа, а не заменяет его.
+#  version — версия схемы файла.
+# =============================================================================
+version: 1
+
+types:
+  money:
+    display: "Буст денег"
+    multiplier: 1.5
+    duration: "30m"
+    price: 5000
+    permission: "tradewind.boost.money"
+    material: "GOLD_INGOT"
+  xp:
+    display: "Буст опыта"
+    multiplier: 2.0
+    duration: "30m"
+    price: 7500
+    permission: "tradewind.boost.xp"
+    material: "EXPERIENCE_BOTTLE"
+
